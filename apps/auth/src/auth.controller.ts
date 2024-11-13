@@ -7,12 +7,12 @@ export class AuthController {
 
   @Post()
   getHello(): string {
-    Logger.log('Hello Auth');
+    Logger.log('Hello Auth!');
     return this.authService.getHello();
   }
   @Post('fe')
   getFe(): string {
-    Logger.log('Hello Fe');
+    Logger.log('Hello Fe!');
     return this.authService.getHello();
   }
 }
