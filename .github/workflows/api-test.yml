@@ -1,0 +1,58 @@
+name: API Trigger Test Workflow
+
+# 두 가지 이벤트 모두에 응답하도록 설정
+on:
+  # repository_dispatch 이벤트에 대한 설정
+  repository_dispatch:
+    types: [custom_event]
+  
+  # workflow_dispatch 이벤트에 대한 설정
+  workflow_dispatch:
+    inputs:
+      input1:
+        description: '테스트 입력값 1'
+        required: true
+        default: 'default value 1'
+      input2:
+        description: '테스트 입력값 2'
+        required: false
+        default: 'default value 2'
+
+jobs:
+  test-trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Print event info
+        run: |
+          echo "Event triggered successfully!"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Event path: ${{ github.event_path }}"
+          
+      - name: Print repository_dispatch payload
+        if: github.event_name == 'repository_dispatch'
+        run: |
+          echo "Repository Dispatch Event Type: ${{ github.event.action }}"
+          echo "Client Payload:"
+          echo "key1: ${{ github.event.client_payload.key1 }}"
+          echo "key2: ${{ github.event.client_payload.key2 }}"
+
+      - name: Print workflow_dispatch inputs
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "Workflow Dispatch Inputs:"
+          echo "input1: ${{ github.event.inputs.input1 }}"
+          echo "input2: ${{ github.event.inputs.input2 }}"
+
+      - name: Create test file
+        run: |
+          echo "Test run at $(date)" > test_output.txt
+          echo "Event type: ${{ github.event_name }}" >> test_output.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: test_output.txt
