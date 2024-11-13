@@ -39,6 +39,16 @@ jobs:
     env:
       WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
     steps:
+      - name: Check if secrets exist
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+        run: |
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "❌ WEBHOOK_URL is empty"
+            exit 1
+          else
+            echo "✅ WEBHOOK_URL is set (length: ${#WEBHOOK_URL})"
+          fi
       - name: Balance 변경사항
         if: needs.check-changes.outputs.balance_changed == 'true'
         run: |
