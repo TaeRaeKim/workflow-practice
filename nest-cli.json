@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/my-monorepo/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/my-monorepo/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/my-monorepo",
+  "projects": {
+    "my-monorepo": {
+      "type": "application",
+      "root": "apps/my-monorepo",
+      "entryFile": "main",
+      "sourceRoot": "apps/my-monorepo/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/my-monorepo/tsconfig.app.json"
+      }
+    },
+    "balance": {
+      "type": "application",
+      "root": "apps/balance",
+      "entryFile": "main",
+      "sourceRoot": "apps/balance/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/balance/tsconfig.app.json"
+      }
+    },
+    "auth": {
+      "type": "application",
+      "root": "apps/auth",
+      "entryFile": "main",
+      "sourceRoot": "apps/auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/auth/tsconfig.app.json"
+      }
+    }
+  }
+}
