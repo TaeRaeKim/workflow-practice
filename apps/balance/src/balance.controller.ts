@@ -1,17 +1,17 @@
-import { Controller, Get, Logger } from '@nestjs/common';
+import { Controller, Post, Logger } from '@nestjs/common';
 import { BalanceService } from './balance.service';
 
 @Controller()
 export class BalanceController {
   constructor(private readonly balanceService: BalanceService) {}
 
-  @Get()
+  @Post()
   getHello(): string {
     Logger.log('Hello Balance');
     return this.balanceService.getHello();
   }
 
-  @Get('be')
+  @Post('be')
   getBe(): string {
     Logger.log('Hello Be');
     return this.balanceService.getHello();
