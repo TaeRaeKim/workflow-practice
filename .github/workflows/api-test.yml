@@ -1,4 +1,4 @@
-name: API Trigger Test Workflow
+name: API 트리거 테스트
 
 # 두 가지 이벤트 모두에 응답하도록 설정
 on:
@@ -25,13 +25,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Print event info
+      - name: 이벤트 정보 출력
         run: |
           echo "Event triggered successfully!"
           echo "Event name: ${{ github.event_name }}"
           echo "Event path: ${{ github.event_path }}"
           
-      - name: Print repository_dispatch payload
+      - name: repository_dispatch payload 출력
         if: github.event_name == 'repository_dispatch'
         run: |
           echo "Repository Dispatch Event Type: ${{ github.event.action }}"
@@ -39,19 +39,19 @@ jobs:
           echo "key1: ${{ github.event.client_payload.key1 }}"
           echo "key2: ${{ github.event.client_payload.key2 }}"
 
-      - name: Print workflow_dispatch inputs
+      - name: workflow_dispatch inputs 출력
         if: github.event_name == 'workflow_dispatch'
         run: |
           echo "Workflow Dispatch Inputs:"
           echo "input1: ${{ github.event.inputs.input1 }}"
           echo "input2: ${{ github.event.inputs.input2 }}"
 
-      - name: Create test file
+      - name: 테스트 파일 생성
         run: |
           echo "Test run at $(date)" > test_output.txt
           echo "Event type: ${{ github.event_name }}" >> test_output.txt
 
-      - name: Upload artifact
+      - name: 결과 업로드
         uses: actions/upload-artifact@v3
         with:
           name: test-results
