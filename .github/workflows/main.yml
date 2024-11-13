@@ -1,0 +1,68 @@
+# .github/workflows/path-monitor.yml
+
+name: 경로 변경 모니터
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      balance_changed: ${{ steps.filter.outputs.balance }}
+      auth_changed: ${{ steps.filter.outputs.auth }}
+      libs_changed: ${{ steps.filter.outputs.libs }}
+      view_changed: ${{ steps.filter.outputs.view }}
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            balance:
+              - 'apps/balance/**'
+            auth:
+              - 'apps/auth/**'
+            libs:
+              - 'apps/libs/**'
+            view:
+              - 'view/**'
+
+  notify-changes:
+    needs: check-changes
+    runs-on: ubuntu-latest
+    env:
+      WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+    steps:
+      - name: Balance 변경사항
+        if: needs.check-changes.outputs.balance_changed == 'true'
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"message":"hello balance"}' \
+          http://$WEBHOOK_URL:3100
+
+      - name: Auth 변경사항
+        if: needs.check-changes.outputs.auth_changed == 'true'
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"message":"hello auth"}' \
+          http://$WEBHOOK_URL:3000
+
+      - name: Libs 변경사항
+        if: needs.check-changes.outputs.libs_changed == 'true'
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"message":"hello be"}' \
+          http://$WEBHOOK_URL:3100/be
+
+      - name: View 변경사항
+        if: needs.check-changes.outputs.view_changed == 'true'
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"message":"hello fe"}' \
+          http://$WEBHOOK_URL:3100/fe
