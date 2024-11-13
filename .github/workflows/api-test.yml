@@ -1,5 +1,8 @@
 name: API 트리거 테스트
 
+# repository_dispatch 이벤트에서 사용할 이름을 지정
+run-name: ${{ github.event.client_payload.display_name || github.workflow }}
+
 # 두 가지 이벤트 모두에 응답하도록 설정
 on:
   # repository_dispatch 이벤트에 대한 설정
