@@ -1,0 +1,26 @@
+name: 시그니처 테스트
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  make-signature:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Generate Signature
+        id: signature
+        uses: ./.github/actions/make-signature
+        with:
+          method: 'GET'
+          uri: '/api/v1/project'
+          access-key: ${{ secrets.ACCESS_KEY }}
+          secret-key: ${{ secrets.SECRET_KEY }}
+      
+      - name: Use Generated Signature
+        run: |
+          echo "Making API call with:"
+          echo "Timestamp: ${{ steps.signature.outputs.timestamp }}"
+          echo "Signature: ${{ steps.signature.outputs.signature }}"
+          
