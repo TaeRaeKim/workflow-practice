@@ -16,7 +16,7 @@ jobs:
             echo "❌ ACCESS_KEY is empty"
             exit 1
           elif [ -z "$SECRET_KEY" ]; then
-            echo "❌ ACCESS_KEY is empty"
+            echo "❌ SECRET_KEY is empty"
             exit 1
           else
             echo "✅ ACCESS_KEY is set (length: ${#ACCESS_KEY})"
