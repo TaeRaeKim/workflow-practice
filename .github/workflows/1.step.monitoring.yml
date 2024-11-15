@@ -1,11 +1,9 @@
 name: 변경 기능 확인 및 빌드 요청
-
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
 jobs:
   check-and-notify:
     runs-on: ubuntu-latest
@@ -22,10 +20,10 @@ jobs:
           fi
           
       - name: 레포지토리 체크아웃
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3      # 수정: '-' 제거
       
       - name: 변경된 기능 확인
-      - uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v2    # 수정: '-' 제거
         id: filter
         with:
           filters: |
@@ -39,7 +37,7 @@ jobs:
               - 'view/**'
 
       - name: 빌드 RestAPI 요청 (Auth)
-        if: needs.check-changes.outputs.auth_changed == 'true'
+        if: steps.filter.outputs.auth == 'true'    # 수정: needs.check-changes -> steps.filter
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d '{"message":"hello auth"}' \
@@ -53,14 +51,14 @@ jobs:
           http://$WEBHOOK_URL:3100
           
       - name: 빌드 RestAPI 요청 (Auth, Balance, Transaction, View)
-        if: needs.check-changes.outputs.libs_changed == 'true'
+        if: steps.filter.outputs.libs == 'true'    # 수정: needs.check-changes -> steps.filter
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d '{"message":"hello be"}' \
           http://$WEBHOOK_URL:3100/be
 
       - name: 빌드 RestAPI 요청 (View)
-        if: needs.check-changes.outputs.view_changed == 'true'
+        if: steps.filter.outputs.view == 'true'    # 수정: needs.check-changes -> steps.filter
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d '{"message":"hello fe"}' \
