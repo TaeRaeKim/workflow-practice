@@ -10,8 +10,21 @@ jobs:
   check-and-notify:
     runs-on: ubuntu-latest
     steps:
+      - name: 필요한 환경변수 확인
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+        run: |
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "❌ WEBHOOK_URL is empty"
+            exit 1
+          else
+            echo "✅ WEBHOOK_URL is set (length: ${#WEBHOOK_URL})"
+          fi
+          
+      - name: 레포지토리 체크아웃
       - uses: actions/checkout@v3
       
+      - name: 변경된 기능 확인
       - uses: dorny/paths-filter@v2
         id: filter
         with:
@@ -24,17 +37,6 @@ jobs:
               - 'apps/libs/**'
             view:
               - 'view/**'
-
-      - name: 필요한 환경변수 확인
-        env:
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-        run: |
-          if [ -z "$WEBHOOK_URL" ]; then
-            echo "❌ WEBHOOK_URL is empty"
-            exit 1
-          else
-            echo "✅ WEBHOOK_URL is set (length: ${#WEBHOOK_URL})"
-          fi
 
       - name: 빌드 RestAPI 요청 (Auth)
         if: needs.check-changes.outputs.auth_changed == 'true'
