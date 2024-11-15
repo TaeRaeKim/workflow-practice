@@ -1,6 +1,4 @@
-# .github/workflows/path-monitor.yml
-
-name: 경로 변경 모니터
+name: 변경 사항 모니터링
 
 on:
   push:
@@ -9,14 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  check-changes:
+  check-and-notify:
     runs-on: ubuntu-latest
-    outputs:
-      balance_changed: ${{ steps.filter.outputs.balance }}
-      auth_changed: ${{ steps.filter.outputs.auth }}
-      libs_changed: ${{ steps.filter.outputs.libs }}
-      view_changed: ${{ steps.filter.outputs.view }}
-
     steps:
       - uses: actions/checkout@v3
       
@@ -33,13 +25,7 @@ jobs:
             view:
               - 'view/**'
 
-  notify-changes:
-    needs: check-changes
-    runs-on: ubuntu-latest
-    env:
-      WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-    steps:
-      - name: Check if secrets exist
+      - name: 필요한 환경변수 확인
         env:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
@@ -49,28 +35,29 @@ jobs:
           else
             echo "✅ WEBHOOK_URL is set (length: ${#WEBHOOK_URL})"
           fi
-      - name: Balance 변경사항
-        if: needs.check-changes.outputs.balance_changed == 'true'
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"message":"hello balance"}' \
-          http://$WEBHOOK_URL:3100
 
-      - name: Auth 변경사항
+      - name: 빌드 RestAPI 요청 (Auth)
         if: needs.check-changes.outputs.auth_changed == 'true'
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d '{"message":"hello auth"}' \
           http://$WEBHOOK_URL:3000
 
-      - name: Libs 변경사항
+      - name: 빌드 RestAPI 요청 (Balance)
+        if: steps.filter.outputs.balance == 'true'
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"message":"hello balance"}' \
+          http://$WEBHOOK_URL:3100
+          
+      - name: 빌드 RestAPI 요청 (Auth, Balance, Transaction, View)
         if: needs.check-changes.outputs.libs_changed == 'true'
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d '{"message":"hello be"}' \
           http://$WEBHOOK_URL:3100/be
 
-      - name: View 변경사항
+      - name: 빌드 RestAPI 요청 (View)
         if: needs.check-changes.outputs.view_changed == 'true'
         run: |
           curl -X POST -H "Content-Type: application/json" \
