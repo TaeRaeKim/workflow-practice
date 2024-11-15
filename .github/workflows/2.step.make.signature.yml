@@ -1,13 +1,30 @@
-name: 시그니처 테스트
-
+name: 시그니처 생성
 on:
   workflow_dispatch:
+    inputs:
+      api_method:
+        description: 'API Method'
+        required: true
+        default: 'GET'
+        type: choice
+        options:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+      target_uri:
+        description: '대상 URI (예: /api/v1/users)'
+        required: true
+        type: string
   
 jobs:
   make-signature:
     runs-on: ubuntu-latest
+    outputs:
+      timestamp: ${{ steps.signature.outputs.timestamp }}
+      signature: ${{ steps.signature.outputs.signature }}
     steps:
-      - name: Check if secrets exist
+      - name: 액세스 키 및 시크릿 키 확인
         env:
           ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
@@ -22,14 +39,16 @@ jobs:
             echo "✅ ACCESS_KEY is set (length: ${#ACCESS_KEY})"
             echo "✅ SECRET_KEY is set (length: ${#SECRET_KEY})"
           fi
-      - uses: actions/checkout@v4
+
+      - name : 레포지토리 체크아웃
+        uses: actions/checkout@v4
       
-      - name: Generate Signature
+      - name: 시그니처 코드 생성
         id: signature
         uses: ./.github/actions/make-signature
         with:
-          method: 'GET'
-          uri: '/api/v1/project'
+          method: ${{inputs.api_method}}
+          uri: ${{inputs.target_uri}}
           access-key: ${{ secrets.ACCESS_KEY }}
           secret-key: ${{ secrets.SECRET_KEY }}
       
@@ -38,4 +57,3 @@ jobs:
           echo "Making API call with:"
           echo "Timestamp: ${{ steps.signature.outputs.timestamp }}"
           echo "Signature: ${{ steps.signature.outputs.signature }}"
-          
