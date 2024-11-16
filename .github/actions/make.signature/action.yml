@@ -1,6 +1,5 @@
 name: 'Make Signature'
 description: 'Generate timestamp and signature for API authentication'
-
 inputs:
   method:
     description: 'HTTP method (GET, POST, etc.)'
@@ -14,7 +13,6 @@ inputs:
   secret-key:
     description: 'Secret Key'
     required: true
-
 outputs:
   timestamp:
     description: 'Generated timestamp'
@@ -22,27 +20,25 @@ outputs:
   signature:
     description: 'Generated signature'
     value: ${{ steps.make-signature.outputs.signature }}
-
 runs:
   using: 'composite'
   steps:
     - id: make-signature
       shell: bash
       run: |
-      	nl=$'\\n'
-      
-      	TIMESTAMP=$(echo $(($(date +%s%N)/1000000)))
+        nl=$'\\n'
+        
+        TIMESTAMP=$(echo $(($(date +%s%N)/1000000)))
         METHOD="${{ inputs.method }}"
         URI="${{ inputs.uri }}"
         ACCESSKEY="${{ inputs.access-key }}"
         SECRETKEY="${{ inputs.secret-key }}"
-      
-      	SIG="$METHOD"' '"$URI"${nl}
-      	SIG+="$TIMESTAMP"${nl}
-      	SIG+="$ACCESSKEY"
-      
-      	SIGNATURE=$(echo -n -e "$SIG"|iconv -t utf8 |openssl dgst -sha256 -hmac $SECRETKEY -binary|openssl enc -base64)
-
+        
+        SIG="$METHOD"' '"$URI"${nl}
+        SIG+="$TIMESTAMP"${nl}
+        SIG+="$ACCESSKEY"
+        
+        SIGNATURE=$(echo -n -e "$SIG"|iconv -t utf8 |openssl dgst -sha256 -hmac $SECRETKEY -binary|openssl enc -base64)
         # Set outputs
         echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
         echo "signature=$SIGNATURE" >> $GITHUB_OUTPUT
