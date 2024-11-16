@@ -1,0 +1,53 @@
+name: 'Start NCP Source Build'
+description: 'Starts a build in NCP Source Build service'
+
+inputs:
+  project-id:
+    description: 'ID of the project to build'
+    required: true
+  timestamp:
+    description: 'NCP API Gateway timestamp'
+    required: true
+  access-key:
+    description: 'NCP IAM access key'
+    required: true
+  signature:
+    description: 'NCP API Gateway signature'
+    required: true
+
+outputs:
+  build-id:
+    description: 'ID of the started build'
+    value: ${{ steps.start-build.outputs.build_id }}
+  build-status:
+    description: 'Status of the started build'
+    value: ${{ steps.start-build.outputs.build_status }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Start Build in NCP Source Build
+      id: start-build
+      shell: bash
+      run: |
+        response=$(curl -X POST \
+          "https://sourcebuild.apigw.ntruss.com/api/v1/projects/${{ inputs.project-id }}/build" \
+          -H 'Content-Type: application/json' \
+          -H "x-ncp-apigw-timestamp: ${{ inputs.timestamp }}" \
+          -H "x-ncp-iam-access-key: ${{ inputs.access-key }}" \
+          -H "x-ncp-apigw-signature-v2: ${{ inputs.signature }}")
+
+        echo "$response"
+
+        build_data=$(echo "$response" | jq -r '.result')
+        
+        if [ -z "$build_data" ]; then
+          echo "Error: Failed to start build for project ID '${{ inputs.project-id }}'"
+          exit 1
+        fi
+        
+        build_id=$(echo "$build_data" | jq -r '.buildId')
+        build_status=$(echo "$build_data" | jq -r '.status')
+
+        echo "build_id=$build_id" >> $GITHUB_OUTPUT
+        echo "build_status=$build_status" >> $GITHUB_OUTPUT
