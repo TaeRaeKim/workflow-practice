@@ -48,6 +48,12 @@ jobs:
         id: signature
         uses: ./.github/actions/make.signature/
 
+      - name: 시그니처 출력
+        run: |
+          echo "Timestamp: ${{ steps.signature.outputs.timestamp }}"
+          echo "Signature: ${{ steps.signature.outputs.signature }}"
+
+
   start-build-balance:
     needs: check-and-notify
     if: ${{ needs.check-and-notify.outputs.balance_changed == 'true' }}

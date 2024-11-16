@@ -26,6 +26,7 @@ jobs:
         uses: ./.github/actions/find.project.id/
         with:
           project-name: ${{ inputs.project-name }}
+        secrets:
           timestamp: ${{ secrets.timestamp }}
           access-key: ${{ secrets.ACCESS_KEY }}
           signature: ${{ secrets.signature }}
