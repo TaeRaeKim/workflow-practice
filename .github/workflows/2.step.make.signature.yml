@@ -45,7 +45,7 @@ jobs:
       
       - name: 시그니처 코드 생성
         id: signature
-        uses: ./.github/actions/make.signature.yml
+        uses: ./.github/actions/make.signature/
         with:
           method: ${{inputs.api_method}}
           uri: ${{inputs.target_uri}}
