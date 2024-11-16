@@ -1,4 +1,3 @@
-# .github/actions/make-signature/action.yml
 name: 'Make Signature'
 description: 'Generate timestamp and signature for API authentication'
 
@@ -38,7 +37,7 @@ runs:
         SECRETKEY="${{ inputs.secret-key }}"
 
         # Create signature string
-        SIG="$METHOD"$'\n'"$URI"$'\n'
+        SIG="$METHOD $URI"$'\n'
         SIG+="$TIMESTAMP"$'\n'
         SIG+="$ACCESSKEY"
 
