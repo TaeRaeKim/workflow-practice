@@ -56,6 +56,5 @@ jobs:
       project-name: 'service-balance'
     secrets:
       timestamp: ${{ needs.check-and-notify.outputs.timestamp }}
-      access-key: ${{ secrets.ACCESS_KEY }}
       signature: ${{ needs.check-and-notify.outputs.signature }}
 

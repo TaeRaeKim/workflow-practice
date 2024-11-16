@@ -9,8 +9,6 @@ on:
     secrets:
       timestamp:
         required: true
-      access-key:
-        required: true
       signature:
         required: true
 
@@ -27,7 +25,7 @@ jobs:
         with:
           project-name: ${{ inputs.project-name }}
           timestamp: ${{ secrets.timestamp }}
-          access-key: ${{ secrets.access-key }}
+          access-key: ${{ secrets.ACCESS_KEY }}
           signature: ${{ secrets.signature }}
 
       - name: 프로젝트 id 출력
