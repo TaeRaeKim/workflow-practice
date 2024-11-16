@@ -7,9 +7,9 @@ on:
         required: true
         type: string
     secrets:
-      ACCESS_KEY:
-        required: true
       timestamp:
+        required: true
+      ACCESS_KEY:
         required: true
       signature:
         required: true
@@ -26,11 +26,10 @@ jobs:
         uses: ./.github/actions/find.project.id/
         with:
           project-name: ${{ inputs.project-name }}
-        secrets:
           timestamp: ${{ secrets.timestamp }}
           access-key: ${{ secrets.ACCESS_KEY }}
           signature: ${{ secrets.signature }}
-
+      
       - name: 프로젝트 id 출력
         run: |
           echo "Project ID: ${{ steps.find-project.outputs.project-id }}"
