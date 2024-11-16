@@ -69,6 +69,7 @@ jobs:
       project-name: 'service-balance'
     secrets:
       access-key: ${{ secrets.ACCESS_KEY }}
+      secret-key: ${{ secrets.SECRET_KEY }}
       timestamp: ${{ needs.check-and-notify.outputs.timestamp }}
       signature: ${{ needs.check-and-notify.outputs.signature }}
   start-build-auth:
