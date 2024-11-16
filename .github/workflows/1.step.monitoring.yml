@@ -72,7 +72,7 @@ jobs:
       signature: ${{ needs.check-and-notify.outputs.signature }}
   start-build-auth:
     needs: check-and-notify
-    if: ${{ needs.check-and-notify.outputs.balance_changed == 'true' }}
+    if: ${{ needs.check-and-notify.outputs.auth_changed == 'true' }}
     uses: ./.github/workflows/2.step.start.build.yml
     with:
       project-name: 'service-auth'

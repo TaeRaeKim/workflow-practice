@@ -39,8 +39,8 @@ jobs:
         id: make-signature
         uses: ./.github/actions/make.signature/
         with:
-          method: POST
-          uri: /api/v1/project/${{ steps.find-project.outputs.project-id }}/build
+          method: 'POST'
+          uri: '/api/v1/project/${{ steps.find-project.outputs.project-id }}/build'
           access-key: ${{ secrets.access-key }}
           secret-key: ${{ secrets.secret-key }}
 
