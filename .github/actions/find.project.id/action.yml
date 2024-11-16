@@ -36,6 +36,8 @@ runs:
           -H 'x-ncp-apigw-timestamp: ${{ inputs.timestamp }}' \
           -H 'x-ncp-iam-access-key: ${{ inputs.access-key }}' \
           -H 'x-ncp-apigw-signature-v2: ${{ inputs.signature }}')
+
+        echo "$response"
         
         project_data=$(echo "$response" | jq -r --arg NAME "${{ inputs.project-name }}" '
           .projects[] | 
