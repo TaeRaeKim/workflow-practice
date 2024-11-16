@@ -37,8 +37,11 @@ runs:
           'https://sourcebuild.apigw.ntruss.com/api/v1/project/${{inputs.project-id}}/build')
 
         echo "$response"
-
-        build_data=$(echo "$response" | jq -r '.result')
+        
+        # HTTP 헤더를 제외하고 JSON 응답만 추출
+        body=$(echo "$response" | awk -v RS='\r\n\r\n' 'END{print}')
+        
+        build_data=$(echo "$body" | jq -r '.result')
         
         if [ -z "$build_data" ]; then
           echo "Error: Failed to start build for project ID '${{ inputs.project-id }}'"
