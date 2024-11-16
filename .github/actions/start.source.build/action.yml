@@ -30,12 +30,11 @@ runs:
       id: start-build
       shell: bash
       run: |
-        response=$(curl -X POST \
-          "https://sourcebuild.apigw.ntruss.com/api/v1/project/${{ inputs.project-id }}/build" \
-          -H 'Content-Type: application/json' \
-          -H "x-ncp-apigw-timestamp: ${{ inputs.timestamp }}" \
-          -H "x-ncp-iam-access-key: ${{ inputs.access-key }}" \
-          -H "x-ncp-apigw-signature-v2: ${{ inputs.signature }}")
+        response=$(curl -i -X POST \
+          -H "x-ncp-apigw-timestamp:${{inputs.timestamp}}" \
+          -H "x-ncp-iam-access-key:${{inputs.access-key}}" \
+          -H "x-ncp-apigw-signature-v2:${{inputs.signature}}" \
+          'https://sourcebuild.apigw.ntruss.com/api/v1/project/37864/build')
 
         echo "$response"
 
