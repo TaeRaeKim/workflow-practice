@@ -27,7 +27,7 @@ jobs:
         with:
           project-name: ${{ inputs.project-name }}
           timestamp: ${{ secrets.timestamp }}
-          access-key: ${{ secrets.ACCESS_KEY }}
+          access-key: ${{ secrets.access-key }}
           signature: ${{ secrets.signature }}
       
       - name: 프로젝트 id 출력

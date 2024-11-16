@@ -13,7 +13,7 @@ export class BalanceController {
 
   @Post('be')
   getBe(): string {
-    Logger.log('Hello Be566!');
+    Logger.log('Hello 4!');
     return this.balanceService.getHello();
   }
 }
