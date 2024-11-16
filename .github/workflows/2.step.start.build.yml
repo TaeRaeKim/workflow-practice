@@ -7,8 +7,6 @@ on:
         required: true
         type: string
     secrets:
-      ACCESS_KEY:
-        required: true
       timestamp:
         required: true
       signature:
