@@ -40,9 +40,9 @@ runs:
         echo "$response"
 
         project_data=$(echo "$response" | jq -r --arg NAME "${{ inputs.project-name }}" '
-          .projects[] | 
-          select(.projectName == $NAME) | 
-          {projectId, projectName}
+          .result.project[] | 
+          select(.name == $NAME) | 
+          {projectId: .id, projectName: .name}
         ')
         
         if [ -z "$project_data" ]; then
