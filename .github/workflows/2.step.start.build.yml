@@ -9,7 +9,7 @@ on:
     secrets:
       timestamp:
         required: true
-      ACCESS_KEY:
+      access-key:
         required: true
       signature:
         required: true

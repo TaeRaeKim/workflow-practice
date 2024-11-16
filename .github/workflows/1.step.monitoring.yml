@@ -16,7 +16,7 @@ jobs:
       view_changed: ${{ steps.filter.outputs.view }}
       timestamp: ${{ steps.signature.outputs.timestamp }}
       signature: ${{ steps.signature.outputs.signature }}
-      ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+      access-key: ${{ secrets.ACCESS_KEY }}
     steps:
       - name: 레포지토리 체크아웃
         uses: actions/checkout@v4
@@ -67,7 +67,7 @@ jobs:
     with:
       project-name: 'service-balance'
     secrets:
-      ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+      access-key: ${{ secrets.ACCESS_KEY }}
       timestamp: ${{ needs.check-and-notify.outputs.timestamp }}
       signature: ${{ needs.check-and-notify.outputs.signature }}
 
