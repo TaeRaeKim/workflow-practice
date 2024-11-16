@@ -17,6 +17,7 @@ jobs:
       timestamp: ${{ steps.signature.outputs.timestamp }}
       signature: ${{ steps.signature.outputs.signature }}
       access-key: ${{ secrets.ACCESS_KEY }}
+      secret-key: ${{ secrets.SECRET_KEY }}
     steps:
       - name: 레포지토리 체크아웃
         uses: actions/checkout@v4
