@@ -31,7 +31,7 @@ runs:
       shell: bash
       run: |
         response=$(curl -X POST \
-          "https://sourcebuild.apigw.ntruss.com/api/v1/projects/${{ inputs.project-id }}/build" \
+          "https://sourcebuild.apigw.ntruss.com/api/v1/project/${{ inputs.project-id }}/build" \
           -H 'Content-Type: application/json' \
           -H "x-ncp-apigw-timestamp: ${{ inputs.timestamp }}" \
           -H "x-ncp-iam-access-key: ${{ inputs.access-key }}" \
