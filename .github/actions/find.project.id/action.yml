@@ -1,0 +1,56 @@
+name: 'Find NCP Project ID'
+description: 'Finds NCP Source Build project ID by project name'
+
+inputs:
+  project-name:
+    description: 'Name of the project to find'
+    required: true
+  timestamp:
+    description: 'NCP API Gateway timestamp'
+    required: true
+  access-key:
+    description: 'NCP IAM access key'
+    required: true
+  signature:
+    description: 'NCP API Gateway signature'
+    required: true
+
+outputs:
+  project-id:
+    description: 'ID of the found project'
+    value: ${{ steps.find-project.outputs.project_id }}
+  project-name:
+    description: 'Name of the found project'
+    value: ${{ steps.find-project.outputs.project_name }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Find Project ID from NCP Source Build API
+      id: find-project
+      shell: bash
+      run: |
+        response=$(curl -X GET \
+          'https://sourcebuild.apigw.ntruss.com/api/v1/project' \
+          -H 'Content-Type: application/json' \
+          -H 'x-ncp-apigw-api-key: ${{ inputs.api-key }}' \
+          -H 'x-ncp-iam-access-key: ${{ inputs.access-key }}' \
+          -H 'x-ncp-apigw-signature: ${{ inputs.signature }}')
+        
+        project_data=$(echo "$response" | jq -r --arg NAME "${{ inputs.project-name }}" '
+          .projects[] | 
+          select(.projectName == $NAME) | 
+          {projectId, projectName}
+        ')
+        
+        if [ -z "$project_data" ]; then
+          echo "Error: Project '${{ inputs.project-name }}' not found"
+          exit 1
+        fi
+        
+        project_id=$(echo "$project_data" | jq -r '.projectId')
+        found_project_name=$(echo "$project_data" | jq -r '.projectName')
+
+        # output으로 저장
+        echo "project_id=$project_id" >> $GITHUB_OUTPUT
+        echo "project_name=$found_project_name" >> $GITHUB_OUTPUT

@@ -23,7 +23,8 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - id: make-signature
+    - name: 시그니처 생성
+      id: make-signature
       shell: bash
       run: |
         nl=$'\\n'
@@ -39,6 +40,7 @@ runs:
         SIG+="$ACCESSKEY"
         
         SIGNATURE=$(echo -n -e "$SIG"|iconv -t utf8 |openssl dgst -sha256 -hmac $SECRETKEY -binary|openssl enc -base64)
+        
         # Set outputs
         echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
         echo "signature=$SIGNATURE" >> $GITHUB_OUTPUT

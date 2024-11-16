@@ -4,26 +4,24 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+
 jobs:
   check-and-notify:
     runs-on: ubuntu-latest
+    outputs:
+      balance_changed: ${{ steps.filter.outputs.balance }}
+      auth_changed: ${{ steps.filter.outputs.auth }}
+      transaction_changed: ${{ steps.filter.outputs.transaction }}
+      libs_changed: ${{ steps.filter.outputs.libs }}
+      view_changed: ${{ steps.filter.outputs.view }}
+      timestamp: ${{ steps.signature.outputs.timestamp }}
+      signature: ${{ steps.signature.outputs.signature }}
     steps:
-      - name: 필요한 환경변수 확인
-        env:
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-        run: |
-          if [ -z "$WEBHOOK_URL" ]; then
-            echo "❌ WEBHOOK_URL is empty"
-            exit 1
-          else
-            echo "✅ WEBHOOK_URL is set (length: ${#WEBHOOK_URL})"
-          fi
-          
       - name: 레포지토리 체크아웃
-        uses: actions/checkout@v3      # 수정: '-' 제거
-      
+        uses: actions/checkout@v4
+
       - name: 변경된 기능 확인
-        uses: dorny/paths-filter@v2    # 수정: '-' 제거
+        uses: dorny/paths-filter@v2
         id: filter
         with:
           filters: |
@@ -31,35 +29,33 @@ jobs:
               - 'apps/balance/**'
             auth:
               - 'apps/auth/**'
+            transaction:
+              - 'apps/transaction/**'
             libs:
               - 'apps/libs/**'
             view:
               - 'view/**'
 
-      - name: 빌드 RestAPI 요청 (Auth)
-        if: steps.filter.outputs.auth == 'true'    # 수정: needs.check-changes -> steps.filter
+      - name: 변경사항 출력
         run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"message":"hello auth"}' \
-          http://$WEBHOOK_URL:3000
+          echo "Balance changed: ${{ steps.filter.outputs.balance }}"
+          echo "Auth changed: ${{ steps.filter.outputs.auth }}"
+          echo "Tx changed: ${{ steps.filter.outputs.transaction }}"
+          echo "Libs changed: ${{ steps.filter.outputs.libs }}"
+          echo "View changed: ${{ steps.filter.outputs.view }}"
+      
+      - name: 시그니처 생성
+        id: signature
+        uses: ./.github/actions/make.signature/
 
-      - name: 빌드 RestAPI 요청 (Balance)
-        if: steps.filter.outputs.balance == 'true'
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"message":"hello balance"}' \
-          http://$WEBHOOK_URL:3100
-          
-      - name: 빌드 RestAPI 요청 (Auth, Balance, Transaction, View)
-        if: steps.filter.outputs.libs == 'true'    # 수정: needs.check-changes -> steps.filter
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"message":"hello be"}' \
-          http://$WEBHOOK_URL:3100/be
+  start-build-balance:
+    needs: check-and-notify
+    if: ${{ needs.check-and-notify.outputs.balance_changed == 'true' }}
+    uses: ./.github/workflows/2.step.start.build.yml
+    with:
+      project-name: 'service-balance'
+    secrets:
+      timestamp: ${{ needs.check-and-notify.outputs.timestamp }}
+      access-key: ${{ secrets.ACCESS_KEY }}
+      signature: ${{ needs.check-and-notify.outputs.signature }}
 
-      - name: 빌드 RestAPI 요청 (View)
-        if: steps.filter.outputs.view == 'true'    # 수정: needs.check-changes -> steps.filter
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"message":"hello fe"}' \
-          http://$WEBHOOK_URL:3100/fe

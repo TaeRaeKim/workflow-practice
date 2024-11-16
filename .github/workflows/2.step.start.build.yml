@@ -1,0 +1,40 @@
+name: Start Build Process
+run-name: Build ${{ inputs.project-name }} Project
+on:
+  workflow_call:
+    inputs:
+      project-name:
+        required: true
+        type: string
+      timestamp:
+        required: true
+        type: string
+    secrets:
+      timestamp:
+        required: true
+      access-key:
+        required: true
+      signature:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 레포지토리 체크아웃
+        uses: actions/checkout@v4
+      
+      - name: 프로젝트 id 가져오기
+        id: find-project
+        uses: ./.github/actions/find.project.id/
+        with:
+          project-name: ${{ inputs.project-name }}
+          timestamp: ${{ secrets.timestamp }}
+          access-key: ${{ secrets.access-key }}
+          signature: ${{ secrets.signature }}
+          
+      - name: 프로젝트 id 출력
+        run: |
+          echo "Project ID: ${{ steps.find-project.outputs.project-id }}"
+          echo "Project Name: ${{ steps.find-project.outputs.project-name }}"
+

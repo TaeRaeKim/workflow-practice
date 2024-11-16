@@ -1,0 +1,23 @@
+name: 액세스 키 및 시크릿 키 확인
+description: 'NCP IAM 액세스 키 및 시크릿 키 확인'
+
+outputs:
+  result:
+    description: '액세스 키 및 시크릿 키 확인 결과'
+    value: ${{ steps.check-secret.outputs.result }}
+
+env:
+  ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+run: |
+  if [ -z "$ACCESS_KEY" ]; then
+    echo "❌ ACCESS_KEY is empty"
+    echo "result=false" >> $GITHUB_OUTPUT
+  elif [ -z "$SECRET_KEY" ]; then
+    echo "❌ SECRET_KEY is empty"
+    echo "result=false" >> $GITHUB_OUTPUT
+  else
+    echo "✅ ACCESS_KEY is set (length: ${#ACCESS_KEY})"
+    echo "✅ SECRET_KEY is set (length: ${#SECRET_KEY})"
+    echo "result=true" >> $GITHUB_OUTPUT
+  fi
