@@ -6,9 +6,6 @@ on:
       project-name:
         required: true
         type: string
-      timestamp:
-        required: true
-        type: string
     secrets:
       timestamp:
         required: true
@@ -32,7 +29,7 @@ jobs:
           timestamp: ${{ secrets.timestamp }}
           access-key: ${{ secrets.access-key }}
           signature: ${{ secrets.signature }}
-          
+
       - name: 프로젝트 id 출력
         run: |
           echo "Project ID: ${{ steps.find-project.outputs.project-id }}"
