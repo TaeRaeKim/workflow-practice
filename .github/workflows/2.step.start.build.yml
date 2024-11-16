@@ -35,3 +35,20 @@ jobs:
           echo "Project ID: ${{ steps.find-project.outputs.project-id }}"
           echo "Project Name: ${{ steps.find-project.outputs.project-name }}"
 
+      - name: 프로젝트 id의 시그니처 생성
+        id: make-signature
+        uses: ./.github/actions/make.signature/
+        with:
+          method: POST
+          uri: /api/v1/project/${{ steps.find-project.outputs.project-id }}/build
+          access-key: ${{ secrets.access-key }}
+          secret-key: ${{ secrets.secret-key }}
+
+      - name: SourceBuild 에 RestAPI로 빌드 시작 요청
+        uses: ./.github/actions/start.source.build/
+        with:
+          project-id: ${{ steps.find-project.outputs.project-id }}
+          timestamp: ${{ steps.make-signature.outputs.timestamp }}
+          access-key: ${{ secrets.access-key }}
+          signature: ${{ steps.make-signature.outputs.signature }}
+
