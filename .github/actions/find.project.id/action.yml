@@ -33,9 +33,9 @@ runs:
         response=$(curl -X GET \
           'https://sourcebuild.apigw.ntruss.com/api/v1/project' \
           -H 'Content-Type: application/json' \
-          -H 'x-ncp-apigw-api-key: ${{ inputs.api-key }}' \
+          -H 'x-ncp-apigw-timestamp: ${{ inputs.timestamp }}' \
           -H 'x-ncp-iam-access-key: ${{ inputs.access-key }}' \
-          -H 'x-ncp-apigw-signature: ${{ inputs.signature }}')
+          -H 'x-ncp-apigw-signature-v2: ${{ inputs.signature }}')
         
         project_data=$(echo "$response" | jq -r --arg NAME "${{ inputs.project-name }}" '
           .projects[] | 
