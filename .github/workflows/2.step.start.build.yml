@@ -11,6 +11,8 @@ on:
         required: true
       access-key:
         required: true
+      secret-key:
+        required: true
       signature:
         required: true
 
