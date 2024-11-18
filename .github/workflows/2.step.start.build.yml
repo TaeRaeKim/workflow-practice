@@ -46,11 +46,6 @@ jobs:
           access-key: ${{ secrets.access-key }}
           secret-key: ${{ secrets.secret-key }}
 
-      - name: 시그니처 출력
-        run: |
-          echo "Timestamp: ${{ steps.make-signature.outputs.timestamp }}"
-          echo "Signature: ${{ steps.make-signature.outputs.signature }}"
-
       - name: SourceBuild 에 RestAPI로 빌드 시작 요청
         uses: ./.github/actions/start.source.build/
         with:
