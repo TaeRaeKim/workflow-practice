@@ -56,11 +56,6 @@ jobs:
           uri: '/api/v1/project'
           access-key: ${{ secrets.ACCESS_KEY }}
           secret-key: ${{ secrets.SECRET_KEY }}
-
-      - name: 시그니처 출력
-        run: |
-          echo "Timestamp: ${{ steps.signature.outputs.timestamp }}"
-          echo "Signature: ${{ steps.signature.outputs.signature }}"
           
   start-build-auth:
     needs: check-and-notify
