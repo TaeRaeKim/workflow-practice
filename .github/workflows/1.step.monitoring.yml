@@ -28,13 +28,15 @@ jobs:
         with:
           filters: |
             balance:
-              - 'apps/balance/**'
+              - 'microservice/apps/balance/**'
             auth:
-              - 'apps/auth/**'
+              - 'microservice/apps/auth/**'
             transaction:
-              - 'apps/transaction/**'
+              - 'microservice/apps/transaction/**'
             libs:
-              - 'apps/libs/**'
+              - 'microservice/libs/**'
+            static:
+              - 'static/**'
             view:
               - 'view/**'
 
@@ -96,7 +98,7 @@ jobs:
     
   start-build-static:
     needs: check-and-notify
-    if: ${{ needs.check-and-notify.outputs.view_changed == 'true' }}
+    if: ${{ needs.check-and-notify.outputs.static_changed == 'true' || needs.check-and-notify.outputs.view_changed == 'true' }}
     uses: ./.github/workflows/2.step.start.build.yml
     with:
       project-name: 'service-static'
