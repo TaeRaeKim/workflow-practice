@@ -90,7 +90,6 @@ jobs:
       secret-key: ${{ secrets.SECRET_KEY }}
       timestamp: ${{ needs.check-and-notify.outputs.timestamp }}
       signature: ${{ needs.check-and-notify.outputs.signature }}
-    
   start-build-static:
     needs: check-and-notify
     if: ${{ needs.check-and-notify.outputs.static_changed == 'true' || needs.check-and-notify.outputs.view_changed == 'true' }}
