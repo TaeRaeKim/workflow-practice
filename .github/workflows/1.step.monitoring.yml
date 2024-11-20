@@ -59,11 +59,21 @@ jobs:
         run: |
           echo "Timestamp: ${{ steps.signature.outputs.timestamp }}"
           echo "Signature: ${{ steps.signature.outputs.signature }}"
-
-
+          
+  start-build-auth:
+    needs: check-and-notify
+    if: ${{ needs.check-and-notify.outputs.auth_changed == 'true' || needs.check-and-notify.outputs.libs_changed == 'true' }}
+    uses: ./.github/workflows/2.step.start.build.yml
+    with:
+      project-name: 'service-auth'
+    secrets:
+      access-key: ${{ secrets.ACCESS_KEY }}
+      secret-key: ${{ secrets.SECRET_KEY }}
+      timestamp: ${{ needs.check-and-notify.outputs.timestamp }}
+      signature: ${{ needs.check-and-notify.outputs.signature }}
   start-build-balance:
     needs: check-and-notify
-    if: ${{ needs.check-and-notify.outputs.balance_changed == 'true' }}
+    if: ${{ needs.check-and-notify.outputs.balance_changed == 'true' || needs.check-and-notify.outputs.libs_changed == 'true' }}
     uses: ./.github/workflows/2.step.start.build.yml
     with:
       project-name: 'service-balance'
@@ -72,12 +82,24 @@ jobs:
       secret-key: ${{ secrets.SECRET_KEY }}
       timestamp: ${{ needs.check-and-notify.outputs.timestamp }}
       signature: ${{ needs.check-and-notify.outputs.signature }}
-  start-build-auth:
+  start-build-transaction:
     needs: check-and-notify
-    if: ${{ needs.check-and-notify.outputs.auth_changed == 'true' }}
+    if: ${{ needs.check-and-notify.outputs.transaction_changed == 'true' || needs.check-and-notify.outputs.libs_changed == 'true' }}
     uses: ./.github/workflows/2.step.start.build.yml
     with:
-      project-name: 'service-auth'
+      project-name: 'service-transaction'
+    secrets:
+      access-key: ${{ secrets.ACCESS_KEY }}
+      secret-key: ${{ secrets.SECRET_KEY }}
+      timestamp: ${{ needs.check-and-notify.outputs.timestamp }}
+      signature: ${{ needs.check-and-notify.outputs.signature }}
+    
+  start-build-static:
+    needs: check-and-notify
+    if: ${{ needs.check-and-notify.outputs.view_changed == 'true' }}
+    uses: ./.github/workflows/2.step.start.build.yml
+    with:
+      project-name: 'service-static'
     secrets:
       access-key: ${{ secrets.ACCESS_KEY }}
       secret-key: ${{ secrets.SECRET_KEY }}
